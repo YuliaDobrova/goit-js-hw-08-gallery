@@ -63,3 +63,53 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const galleryList = document.querySelector('.js-gallery');
+const lightBoxRef = document.querySelector('.js-lightbox');
+const lightBoxImg = document.querySelector('img.lightbox__image');
+const btnLightBox = document.querySelector(
+  'button[data-action="close-lightbox',
+);
+
+const galleryItemsRef = createGallery(galleryItems);
+galleryList.insertAdjacentHTML('beforeend', galleryItemsRef);
+galleryList.addEventListener('click', onGalleryListClick);
+btnLightBox.addEventListener('click', onBtnCloseLightBox);
+
+document.addEventListener('keydown', () => {
+  if (event.key === 'Escape') return onBtnCloseLightBox();
+});
+
+function createGallery(item) {
+  return item
+    .map(({ preview, original, description }) => {
+      return `
+    <li class="gallery__item">
+    <a class="gallery__link" href="${original}">
+    <img class="gallery__image" 
+    src="${preview}"
+    data-source="${original}"
+    alt="${description}"
+    />
+    </a>
+    </li>
+    `;
+    })
+    .join('');
+}
+
+function onGalleryListClick(event) {
+  event.preventDefault();
+
+  if (!event.target.classList.contains('gallery__image')) {
+    return;
+  }
+  const dataSourse = event.target.dataset.source;
+  lightBoxRef.classList.add('is-open');
+  lightBoxImg.src = dataSourse;
+}
+
+function onBtnCloseLightBox(event) {
+  lightBoxRef.classList.remove('is-open');
+  lightBoxImg.removeAttribute('src');
+}
